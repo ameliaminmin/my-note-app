@@ -6,13 +6,16 @@ import { collection, addDoc, onSnapshot, query, orderBy, updateDoc, doc, deleteD
 import { auth } from '@/services/firebase';
 import { onAuthStateChange } from '@/services/firebase';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
     // 定義筆記狀態
     const [notes, setNotes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [deleteModal, setDeleteModal] = useState({ show: false, noteId: null });
+    const router = useRouter();
 
     // 監聽登入狀態
     useEffect(() => {
@@ -21,7 +24,7 @@ export default function Home() {
             setLoading(false);
         });
         return () => unsubscribe();
-    }, []);
+    }, [router]);
 
     // 從 Firestore 讀取資料並監聽變化
     useEffect(() => {
@@ -132,103 +135,21 @@ export default function Home() {
         }
     };
 
-    // 未登入時的歡迎頁面
+    // 未登入時的顯示
     if (!user && !loading) {
         return (
             <main className="pt-24">
                 <div className="container mx-auto px-4">
                     <div className="max-w-3xl mx-auto text-center">
-                        {/* 筆記圖示 */}
-                        <div className="mb-8">
-                            <svg
-                                width="120"
-                                height="120"
-                                viewBox="0 0 120 120"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="mx-auto"
-                            >
-                                {/* 筆記本背景 */}
-                                <rect
-                                    x="20"
-                                    y="10"
-                                    width="80"
-                                    height="100"
-                                    rx="8"
-                                    fill="#FEF3C7"
-                                    stroke="#F59E0B"
-                                    strokeWidth="2"
-                                />
-                                {/* 筆記本線條 */}
-                                <line
-                                    x1="30"
-                                    y1="30"
-                                    x2="90"
-                                    y2="30"
-                                    stroke="#F59E0B"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                />
-                                <line
-                                    x1="30"
-                                    y1="45"
-                                    x2="90"
-                                    y2="45"
-                                    stroke="#F59E0B"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                />
-                                <line
-                                    x1="30"
-                                    y1="60"
-                                    x2="90"
-                                    y2="60"
-                                    stroke="#F59E0B"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                />
-                                <line
-                                    x1="30"
-                                    y1="75"
-                                    x2="90"
-                                    y2="75"
-                                    stroke="#F59E0B"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                />
-                                {/* 筆記本裝飾 */}
-                                <circle
-                                    cx="60"
-                                    cy="90"
-                                    r="5"
-                                    fill="#F59E0B"
-                                />
-                                <path
-                                    d="M55 90L65 90"
-                                    stroke="white"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                />
-                                <path
-                                    d="M60 85L60 95"
-                                    stroke="white"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                />
-                            </svg>
-                        </div>
                         <h1 className="text-4xl font-bold mb-6 text-gray-800">
-                            讓你的筆記更有條理
+                            請先登入
                         </h1>
                         <p className="text-xl text-gray-600 mb-8">
-                            使用我們的筆記軟體，輕鬆管理你的重要事項。無論是工作計劃、學習筆記還是生活瑣事，都能一目了然。
+                            您需要登入才能查看和管理您的筆記。
                         </p>
                         <div className="flex justify-center gap-4">
                             <Link href="/login" className="bg-yellow-400 text-black py-3 px-8 rounded-md hover:bg-yellow-500 transition-colors duration-300">
-                                登入
-                            </Link>
-                            <Link href="/register" className="bg-gray-800 text-white py-3 px-8 rounded-md hover:bg-gray-700 transition-colors duration-300">
-                                註冊
+                                前往登入
                             </Link>
                         </div>
                     </div>
